@@ -26,14 +26,14 @@ module.exports = ScrollInsert = (function(_super) {
     var wbatch;
     this._batch.push({
       index: {
-        type: obj.type
+        _type: obj.type,
+        _id: obj.id
       }
     });
     this._batch.push(obj.source);
     if (this._batch.length > 2000) {
       wbatch = this._batch.splice(0);
-      debug("Would have inserted batch of " + (wbatch.length / 2));
-      return es.bulk({
+      return this.es.bulk({
         index: this.idx,
         body: wbatch
       }, (function(_this) {
@@ -42,6 +42,7 @@ module.exports = ScrollInsert = (function(_super) {
             console.error("Failed to bulk insert: ", err);
           }
           _this._count += wbatch.length / 2;
+          debug("Inserted batch of " + (wbatch.length / 2) + ". Total is now " + _this._count);
           return cb();
         };
       })(this));

@@ -60,7 +60,7 @@ module.exports = class ScrollSearch extends require('stream').Readable
                 debug "First read. Total is #{ @_total }.", @_scrollId
 
                 for r in results.hits.hits
-                    @_keepFetching = false if !@push type:r._type, source:r._source
+                    @_keepFetching = false if !@push type:r._type, source:r._source, id:r._id
 
                 if @_remaining <= 0
                     @_finished()

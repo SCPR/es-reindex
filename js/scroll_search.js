@@ -90,7 +90,8 @@ module.exports = ScrollSearch = (function(_super) {
             r = _ref[_i];
             if (!_this.push({
               type: r._type,
-              source: r._source
+              source: r._source,
+              id: r._id
             })) {
               _this._keepFetching = false;
             }
