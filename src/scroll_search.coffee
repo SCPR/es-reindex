@@ -2,7 +2,7 @@ debug           = require("debug")("scpr")
 
 module.exports = class ScrollSearch extends require('stream').Readable
     constructor: (@es,@idx,@body) ->
-        super objectMode:true
+        super objectMode:true, highWaterMark:10000
 
         @_scrollId  = null
         @_total     = null
@@ -23,7 +23,7 @@ module.exports = class ScrollSearch extends require('stream').Readable
 
         if @_scrollId
             debug "Running scroll", @_scrollId
-            @es.scroll scroll:"10s", body:@_scrollId, (err,results) =>
+            @es.scroll scroll:"60s", body:@_scrollId, (err,results) =>
                 if err
                     debug "Scroll failed: #{err}"
                     throw err
@@ -44,9 +44,12 @@ module.exports = class ScrollSearch extends require('stream').Readable
                     @_fetching = false
                     @_fetch() if @_keepFetching
 
+                    if !@_keepFetching
+                        debug "Suspending fetches after a push returned false"
+
         else
             debug "Starting search on #{@idx}"
-            @es.search index:@idx, body:@body, search_type:"scan", scroll:"10s", (err,results) =>
+            @es.search index:@idx, body:@body, search_type:"scan", scroll:"60s", (err,results) =>
                 if err
                     # FIXME: The most likely case here is connection failure or IndexMissing
                     debug "Elasticsearch error: ", err

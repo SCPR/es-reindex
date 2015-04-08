@@ -4,7 +4,7 @@ module.exports = class ScrollInsert extends require("stream").Writable
     constructor: (@es,@idx) ->
         @_batch = []
         @_count = 0
-        super objectMode:true
+        super objectMode:true, highWaterMark:10000
 
         @once "finish", =>
             console.log "ScrollInsert finished with ", @_count

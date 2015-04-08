@@ -12,7 +12,8 @@ module.exports = ScrollSearch = (function(_super) {
     this.idx = idx;
     this.body = body;
     ScrollSearch.__super__.constructor.call(this, {
-      objectMode: true
+      objectMode: true,
+      highWaterMark: 10000
     });
     this._scrollId = null;
     this._total = null;
@@ -31,7 +32,7 @@ module.exports = ScrollSearch = (function(_super) {
     if (this._scrollId) {
       debug("Running scroll", this._scrollId);
       return this.es.scroll({
-        scroll: "10s",
+        scroll: "60s",
         body: this._scrollId
       }, (function(_this) {
         return function(err, results) {
@@ -61,7 +62,10 @@ module.exports = ScrollSearch = (function(_super) {
           } else {
             _this._fetching = false;
             if (_this._keepFetching) {
-              return _this._fetch();
+              _this._fetch();
+            }
+            if (!_this._keepFetching) {
+              return debug("Suspending fetches after a push returned false");
             }
           }
         };
@@ -72,7 +76,7 @@ module.exports = ScrollSearch = (function(_super) {
         index: this.idx,
         body: this.body,
         search_type: "scan",
-        scroll: "10s"
+        scroll: "60s"
       }, (function(_this) {
         return function(err, results) {
           var r, _i, _len, _ref;

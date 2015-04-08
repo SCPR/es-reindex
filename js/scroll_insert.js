@@ -13,7 +13,8 @@ module.exports = ScrollInsert = (function(_super) {
     this._batch = [];
     this._count = 0;
     ScrollInsert.__super__.constructor.call(this, {
-      objectMode: true
+      objectMode: true,
+      highWaterMark: 10000
     });
     this.once("finish", (function(_this) {
       return function() {
