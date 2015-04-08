@@ -77,6 +77,7 @@ runIndex = (cb) ->
         # we're all done
         cb()
 
+
     writer = new ScrollInsert es, idx.to, argv.batch
     search = new ScrollSearch es, idx.from, body
 

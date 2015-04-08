@@ -10,17 +10,17 @@ module.exports = class ScrollInsert extends require("stream").Writable
             console.log "ScrollInsert finished with ", @_count
 
     _write: (obj,encoding,cb) ->
-        @_batch.push index:{ _type:obj.type, _id:obj.id }
-        @_batch.push obj.source
+        @_batch.push index:{ _type:obj._type, _id:obj._id }
+        @_batch.push obj._source
 
-        if @_batch.length > 2000
+        if @_batch.length >= 2000
             wbatch = @_batch.splice(0)
             @es.bulk index:@idx, body:wbatch, (err,resp) =>
                 if err
                     console.error "Failed to bulk insert: ", err
 
                 @_count += (wbatch.length / 2)
-                debug "Inserted batch of #{ wbatch.length / 2 }. Total is now #{ @_count }"
+                debug "Inserted batch of #{ wbatch.length / 2 }. Total is now #{ @_count }."
 
                 cb()
         else
