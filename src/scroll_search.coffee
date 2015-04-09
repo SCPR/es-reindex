@@ -14,6 +14,8 @@ module.exports = class ScrollSearch extends require('stream').PassThrough
                 @es.search index:@idx, body:@body, scroll:"60s", search_type:"scan", (err,resp) =>
                     throw err if err
 
+                    debug "Total for #{ @idx } will be #{ resp.hits.total }."
+
                     @_scrollId = resp._scroll_id
                     sFunc null, cb
 

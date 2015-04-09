@@ -18,7 +18,17 @@ module.exports = ScrollInsert = (function(_super) {
     });
     this.once("finish", (function(_this) {
       return function() {
-        return console.log("ScrollInsert finished with ", _this._count);
+        return _this.es.bulk({
+          index: _this.idx,
+          body: _this._batch
+        }, function(err, resp) {
+          if (err) {
+            console.error("Failed to bulk insert: ", err);
+          }
+          _this._count += _this._batch.length / 2;
+          debug("Inserted final batch of " + (_this._batch.length / 2) + ". Total is now " + _this._count + ".");
+          return debug("ScrollInsert finished with ", _this._count);
+        });
       };
     })(this));
   }

@@ -32,6 +32,7 @@ module.exports = ScrollSearch = (function(_super) {
             if (err) {
               throw err;
             }
+            debug("Total for " + _this.idx + " will be " + resp.hits.total + ".");
             _this._scrollId = resp._scroll_id;
             return sFunc(null, cb);
           });
